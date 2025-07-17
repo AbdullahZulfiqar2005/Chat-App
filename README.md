@@ -21,8 +21,8 @@ A full-stack real-time chat application with Firebase Authentication, user-to-us
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
+git clone https://github.com/AbdullahZulfiqar2005/Chat-App.git
+cd Chat-App
 ```
 
 ### 2. Setup Backend
@@ -76,6 +76,3 @@ cd <your-repo-folder>
 - Each user is assigned a random display name on first login (e.g., "Brave Tiger").
 - Only verified users can log in and chat.
 - No passwords are stored in your backend; all authentication is handled by Firebase.
-
-## License
-MIT 
