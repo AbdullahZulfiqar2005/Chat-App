@@ -23,7 +23,12 @@ function Login() {
       }
       navigate('/chat');
     } catch (err) {
-      setError(err.message || 'Login failed');
+      let msg = 'Login failed';
+      if (err.code === 'auth/user-not-found') msg = 'No account found with this email.';
+      else if (err.code === 'auth/wrong-password') msg = 'Incorrect password.';
+      else if (err.code === 'auth/too-many-requests') msg = 'Too many failed attempts. Please try again later.';
+      else if (err.code === 'auth/network-request-failed') msg = 'Network error. Please check your connection.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

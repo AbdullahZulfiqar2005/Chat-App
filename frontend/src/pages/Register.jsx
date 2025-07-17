@@ -19,7 +19,12 @@ function Register() {
       await register(email, password);
       setSuccess('Registration successful! Please check your email to verify your account before logging in.');
     } catch (err) {
-      setError(err.message || 'Registration failed');
+      let msg = 'Registration failed';
+      if (err.code === 'auth/email-already-in-use') msg = 'This email is already registered.';
+      else if (err.code === 'auth/invalid-email') msg = 'Please enter a valid email address.';
+      else if (err.code === 'auth/weak-password') msg = 'Password should be at least 6 characters.';
+      else if (err.code === 'auth/network-request-failed') msg = 'Network error. Please check your connection.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

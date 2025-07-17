@@ -34,26 +34,17 @@ export function AuthProvider({ children }) {
   const register = async (email, password) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await sendEmailVerification(cred.user);
-    // Assign or retrieve random display name
-    let displayName = cred.user.displayName;
-    if (!displayName) {
-      const key = `displayName_${cred.user.uid}`;
-      displayName = localStorage.getItem(key);
-      if (!displayName) {
-        displayName = getRandomName();
-        localStorage.setItem(key, displayName);
-      }
-    }
-    await axios.post('http://localhost:5000/api/users/sync', {
-      uid: cred.user.uid,
-      email: cred.user.email,
-      displayName,
-    });
+    // Do NOT sync to backend here; only after verified login
     return cred.user;
   };
 
   const login = async (email, password) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
+    await cred.user.reload();
+    if (!cred.user.emailVerified) {
+      // Don't sync unverified users
+      return cred;
+    }
     // Assign or retrieve random display name
     let displayName = cred.user.displayName;
     if (!displayName) {

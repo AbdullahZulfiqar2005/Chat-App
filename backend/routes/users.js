@@ -29,8 +29,8 @@ router.post('/sync', async (req, res) => {
     }
     res.json({ message: 'User synced', user });
   } catch (err) {
-    console.error('SYNC ERROR:', err); // <-- Add this line
-    res.status(500).json({ message: 'Server error' });
+    // Optionally log error in production, but do not expose details
+    res.status(500).json({ message: 'An unexpected error occurred. Please try again.' });
   }
 });
 
