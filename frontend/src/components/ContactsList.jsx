@@ -11,7 +11,7 @@ function ContactsList({ selectedUser, onSelect, onlineUsers }) {
     const fetchContacts = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/users', {
-          headers: { Authorization: `Bearer ${user.token}` },
+          params: { uid: user.uid },
         });
         setContacts(res.data);
       } catch {
@@ -29,7 +29,7 @@ function ContactsList({ selectedUser, onSelect, onlineUsers }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {contacts.map(contact => (
         <div
-          key={contact._id}
+          key={contact.uid}
           onClick={() => onSelect(contact)}
           style={{
             display: 'flex',
@@ -37,10 +37,10 @@ function ContactsList({ selectedUser, onSelect, onlineUsers }) {
             gap: 12,
             padding: '0.7em 1em',
             borderRadius: 10,
-            background: selectedUser && selectedUser._id === contact._id ? 'var(--primary)' : 'var(--surface)',
-            color: selectedUser && selectedUser._id === contact._id ? '#fff' : 'var(--text)',
+            background: selectedUser && selectedUser.uid === contact.uid ? 'var(--primary)' : 'var(--surface)',
+            color: selectedUser && selectedUser.uid === contact.uid ? '#fff' : 'var(--text)',
             cursor: 'pointer',
-            boxShadow: selectedUser && selectedUser._id === contact._id ? '0 2px 8px rgba(162,89,247,0.10)' : 'none',
+            boxShadow: selectedUser && selectedUser.uid === contact.uid ? '0 2px 8px rgba(162,89,247,0.10)' : 'none',
             fontWeight: 500,
             transition: 'background 0.2s, color 0.2s',
           }}
@@ -49,10 +49,10 @@ function ContactsList({ selectedUser, onSelect, onlineUsers }) {
             width: 12,
             height: 12,
             borderRadius: '50%',
-            background: onlineUsers?.includes(contact._id) ? 'var(--accent)' : 'var(--muted)',
+            background: onlineUsers?.includes(contact.uid) ? 'var(--accent)' : 'var(--muted)',
             display: 'inline-block',
           }} />
-          <span>{contact.username}</span>
+          <span>{contact.displayName || contact.email.split('@')[0]}</span>
         </div>
       ))}
     </div>

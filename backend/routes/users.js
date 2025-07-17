@@ -17,10 +17,28 @@ function auth(req, res, next) {
   }
 }
 
-// Get all users except self
-router.get('/', auth, async (req, res) => {
+// Upsert user (called from frontend after login)
+router.post('/sync', async (req, res) => {
+  const { uid, email, displayName } = req.body;
+  if (!uid || !email) return res.status(400).json({ message: 'Missing uid or email' });
   try {
-    const users = await User.find({ _id: { $ne: req.user.id } }).select('-password');
+    let user = await User.findOne({ uid });
+    if (!user) {
+      user = new User({ uid, email, displayName });
+      await user.save();
+    }
+    res.json({ message: 'User synced', user });
+  } catch (err) {
+    console.error('SYNC ERROR:', err); // <-- Add this line
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get all users except self
+router.get('/', async (req, res) => {
+  const { uid } = req.query;
+  try {
+    const users = await User.find({ uid: { $ne: uid } });
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

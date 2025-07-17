@@ -21,8 +21,8 @@ function ChatWindow({ selectedUser, socket }) {
   useEffect(() => {
     if (!selectedUser) return;
     setLoading(true);
-    axios.get(`http://localhost:5000/api/messages/${selectedUser._id}`, {
-      headers: { Authorization: `Bearer ${user.token}` },
+    axios.get(`http://localhost:5000/api/messages/${selectedUser.uid}`, {
+      params: { uid: user.uid },
     })
       .then(res => setMessages(res.data))
       .catch(() => setMessages([]))
@@ -38,7 +38,8 @@ function ChatWindow({ selectedUser, socket }) {
   useEffect(() => {
     if (!socket) return;
     const handler = (msg) => {
-      if (msg.sender === selectedUser._id || msg.recipient === selectedUser._id) {
+      if ((msg.sender === selectedUser.uid && msg.recipient === user.uid) ||
+          (msg.sender === user.uid && msg.recipient === selectedUser.uid)) {
         setMessages(prev => [...prev, msg]);
       }
     };
@@ -48,7 +49,7 @@ function ChatWindow({ selectedUser, socket }) {
       socket.off('receiveMessage', handler);
       socket.off('messageSent', handler);
     };
-  }, [socket, selectedUser]);
+  }, [socket, selectedUser, user]);
 
   if (!selectedUser) return (
     <div style={{
@@ -109,15 +110,15 @@ function ChatWindow({ selectedUser, socket }) {
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: msg.sender === user.id ? 'flex-end' : 'flex-start',
+                  justifyContent: msg.sender === user.uid ? 'flex-end' : 'flex-start',
                   marginBottom: 8,
                 }}
               >
                 <div
                   title={formatTime(msg.createdAt)}
                   style={{
-                    background: msg.sender === user.id ? 'var(--primary)' : 'var(--surface)',
-                    color: msg.sender === user.id ? '#fff' : 'var(--text)',
+                    background: msg.sender === user.uid ? 'var(--primary)' : 'var(--surface)',
+                    color: msg.sender === user.uid ? '#fff' : 'var(--text)',
                     borderRadius: 16,
                     padding: '0.7em 1.1em',
                     maxWidth: '70%',

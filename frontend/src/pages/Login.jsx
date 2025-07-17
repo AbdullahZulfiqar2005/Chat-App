@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      login(res.data.token, res.data.user);
+      const cred = await login(email, password);
+      await cred.user.reload(); // Ensure latest emailVerified status
+      if (!cred.user.emailVerified) {
+        setError('Please verify your email before logging in.');
+        return;
+      }
       navigate('/chat');
     } catch (err) {
-      console.log(err);
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,9 +59,9 @@ function Login() {
           onChange={e => setPassword(e.target.value)}
           required
         />
-        <button type="submit" style={{ fontWeight: 600, fontSize: '1.1em' }}>Login</button>
+        <button type="submit" style={{ fontWeight: 600, fontSize: '1.1em', background: 'var(--primary)', color: 'var(--text)' }} disabled={loading}>{loading ? 'Signing in...' : 'Sign In'}</button>
         <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link to="/register" style={{ color: 'var(--secondary)', fontWeight: 600 }}>Sign Up</Link>
         </div>
       </form>

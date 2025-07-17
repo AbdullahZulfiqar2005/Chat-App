@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Register() {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/auth/register', { username, email, password });
-      setSuccess('Registration successful! You can now log in.');
-      setTimeout(() => navigate('/login'), 1200);
+      await register(email, password);
+      setSuccess('Registration successful! Please check your email to verify your account before logging in.');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.message || 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,13 +43,6 @@ function Register() {
         {error && <div style={{ color: 'var(--error)', textAlign: 'center', fontWeight: 500 }}>{error}</div>}
         {success && <div style={{ color: 'var(--accent)', textAlign: 'center', fontWeight: 500 }}>{success}</div>}
         <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          required
-        />
-        <input
           type="email"
           placeholder="Email"
           value={email}
@@ -61,7 +56,7 @@ function Register() {
           onChange={e => setPassword(e.target.value)}
           required
         />
-        <button type="submit" style={{ fontWeight: 600, fontSize: '1.1em', background: 'var(--secondary)', color: 'var(--text)' }}>Register</button>
+        <button type="submit" style={{ fontWeight: 600, fontSize: '1.1em', background: 'var(--secondary)', color: 'var(--text)' }} disabled={loading}>{loading ? 'Registering...' : 'Register'}</button>
         <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
           Already have an account?{' '}
           <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</Link>

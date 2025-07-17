@@ -13,11 +13,12 @@ function Chat() {
 
   // Connect to Socket.IO
   useEffect(() => {
+    if (!user) return;
     socketRef.current = io('http://localhost:5000', {
-      auth: { token: user.token },
+      auth: { uid: user.uid },
       transports: ['websocket'],
     });
-    socketRef.current.emit('userOnline', user.id);
+    socketRef.current.emit('userOnline', user.uid);
     socketRef.current.on('onlineUsers', setOnlineUsers);
     return () => {
       socketRef.current.disconnect();
@@ -28,8 +29,8 @@ function Chat() {
   const handleSendMessage = (content) => {
     if (!selectedUser || !content.trim()) return;
     socketRef.current.emit('sendMessage', {
-      sender: user.id,
-      recipient: selectedUser._id,
+      sender: user.uid,
+      recipient: selectedUser.uid,
       content,
     });
   };
