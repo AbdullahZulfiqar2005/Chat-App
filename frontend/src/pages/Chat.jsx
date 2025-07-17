@@ -35,6 +35,13 @@ function Chat() {
     });
   };
 
+  // Get current user's display name
+  let displayName = user?.displayName;
+  if (!displayName && user) {
+    const key = `displayName_${user.uid}`;
+    displayName = localStorage.getItem(key) || user.email.split('@')[0];
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -58,6 +65,9 @@ function Chat() {
         overflowY: 'auto', // enable scroll only for sidebar if needed
       }}>
         <div style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', marginBottom: 8 }}>Contacts</div>
+        <div style={{ fontWeight: 500, fontSize: '1.1rem', color: 'var(--muted)', marginBottom: 16 }}>
+          Your name: <span style={{ color: 'var(--primary)', fontWeight: 700 }}>{displayName}</span>
+        </div>
         <ContactsList
           selectedUser={selectedUser}
           onSelect={setSelectedUser}
