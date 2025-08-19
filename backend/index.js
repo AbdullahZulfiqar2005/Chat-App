@@ -66,8 +66,12 @@ app.get('/api/health', (req, res) => {
 
 // Socket.IO events
 io.on('connection', (socket) => {
+  try {
+    console.log('Socket connected:', socket.id, 'origin:', socket.handshake?.headers?.origin);
+  } catch {}
   // Listen for user identification
   socket.on('userOnline', (userId) => {
+    try { console.log('userOnline:', userId, 'socket:', socket.id); } catch {}
     onlineUsers[userId] = socket.id;
     io.emit('onlineUsers', Object.keys(onlineUsers));
   });
@@ -75,6 +79,7 @@ io.on('connection', (socket) => {
   // Listen for sending messages
   socket.on('sendMessage', async ({ sender, recipient, content }) => {
     try {
+      console.log('sendMessage:', sender, '->', recipient, 'len:', (content||'').length);
       // Persist message
       const message = new Message({ sender, recipient, content });
       await message.save();
@@ -92,6 +97,7 @@ io.on('connection', (socket) => {
 
   // Handle disconnect
   socket.on('disconnect', () => {
+    try { console.log('Socket disconnected:', socket.id); } catch {}
     // Remove user from onlineUsers
     for (const [userId, sockId] of Object.entries(onlineUsers)) {
       if (sockId === socket.id) {
@@ -101,6 +107,11 @@ io.on('connection', (socket) => {
     }
     io.emit('onlineUsers', Object.keys(onlineUsers));
   });
+});
+
+// Online users debug endpoint
+app.get('/api/online', (req, res) => {
+  res.json({ online: Object.keys(onlineUsers) });
 });
 
 const PORT = process.env.PORT || 5000;
