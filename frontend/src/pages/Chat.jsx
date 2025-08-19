@@ -10,6 +10,7 @@ function Chat() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socketRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Connect to Socket.IO
   useEffect(() => {
@@ -24,6 +25,14 @@ function Chat() {
       socketRef.current.disconnect();
     };
   }, [user]);
+
+  // Track viewport size to tailor mobile layout
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 900);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Send message handler
   const handleSendMessage = (content) => {
@@ -63,6 +72,8 @@ function Chat() {
         position: 'sticky',
         top: '2rem',
         overflowY: 'auto',
+        // Hide sidebar on mobile when a chat is open
+        display: isMobile && selectedUser ? 'none' : 'flex',
       }}>
         <div style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', marginBottom: 8 }}>Contacts</div>
         <div style={{ fontWeight: 500, fontSize: '1.1rem', color: 'var(--muted)', marginBottom: 16 }}>
@@ -87,7 +98,25 @@ function Chat() {
         flexDirection: 'column',
         minWidth: 0,
         minHeight: 'calc(100vh - 4rem)',
+        // Hide main on mobile until a contact is selected
+        display: isMobile && !selectedUser ? 'none' : 'flex',
       }}>
+        {isMobile && selectedUser && (
+          <button
+            onClick={() => setSelectedUser(null)}
+            style={{
+              alignSelf: 'flex-start',
+              marginBottom: 12,
+              background: 'transparent',
+              color: 'var(--primary)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              padding: '0.4em 0.8em',
+            }}
+          >
+            ← Back
+          </button>
+        )}
         <ChatWindow selectedUser={selectedUser} socket={socketRef.current} />
         {selectedUser && (
           <MessageInput onSend={handleSendMessage} disabled={!selectedUser} />
