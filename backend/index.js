@@ -51,11 +51,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {/* MongoDB connected */})
+// MongoDB connection (modern driver options no longer needed)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {/* MongoDB connected */})
   .catch(err => {/* MongoDB connection error */});
 
 // Socket.IO events
