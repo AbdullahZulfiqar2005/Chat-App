@@ -10,7 +10,7 @@ function ContactsList({ selectedUser, onSelect, onlineUsers }) {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/users', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
           params: { uid: user.uid },
         });
         setContacts(res.data);

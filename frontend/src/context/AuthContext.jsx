@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem(key, displayName);
       }
     }
-    await axios.post('http://localhost:5000/api/users/sync', {
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/users/sync`, {
       uid: cred.user.uid,
       email: cred.user.email,
       displayName,

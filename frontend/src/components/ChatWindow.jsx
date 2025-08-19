@@ -21,7 +21,7 @@ function ChatWindow({ selectedUser, socket }) {
   useEffect(() => {
     if (!selectedUser) return;
     setLoading(true);
-    axios.get(`http://localhost:5000/api/messages/${selectedUser.uid}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/messages/${selectedUser.uid}`, {
       params: { uid: user.uid },
     })
       .then(res => setMessages(res.data))
@@ -121,7 +121,7 @@ function ChatWindow({ selectedUser, socket }) {
                     color: msg.sender === user.uid ? '#fff' : 'var(--text)',
                     borderRadius: 16,
                     padding: '0.7em 1.1em',
-                    maxWidth: '70%',
+                    maxWidth: '85%',
                     boxShadow: '0 2px 8px rgba(162,89,247,0.08)',
                     fontSize: '1.05em',
                     wordBreak: 'break-word',

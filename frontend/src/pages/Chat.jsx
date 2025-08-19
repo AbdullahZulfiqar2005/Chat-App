@@ -14,7 +14,7 @@ function Chat() {
   // Connect to Socket.IO
   useEffect(() => {
     if (!user) return;
-    socketRef.current = io('http://localhost:5000', {
+    socketRef.current = io(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL, {
       auth: { uid: user.uid },
       transports: ['websocket'],
     });
@@ -43,13 +43,13 @@ function Chat() {
   }
 
   return (
-    <div style={{
+    <div className="chat-layout" style={{
       minHeight: '100vh',
       display: 'flex',
       background: 'linear-gradient(120deg, var(--primary) 0%, var(--secondary) 100%)',
     }}>
       {/* Sidebar: Contacts */}
-      <aside style={{
+      <aside className="chat-sidebar" style={{
         width: 300,
         background: 'var(--surface)',
         borderTopLeftRadius: 18,
@@ -59,10 +59,10 @@ function Chat() {
         display: 'flex',
         flexDirection: 'column',
         gap: '1.5rem',
-        height: 'calc(100vh - 4rem)', // fixed height for sidebar
+        height: 'calc(100vh - 4rem)',
         position: 'sticky',
         top: '2rem',
-        overflowY: 'auto', // enable scroll only for sidebar if needed
+        overflowY: 'auto',
       }}>
         <div style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--primary)', marginBottom: 8 }}>Contacts</div>
         <div style={{ fontWeight: 500, fontSize: '1.1rem', color: 'var(--muted)', marginBottom: 16 }}>
@@ -76,7 +76,7 @@ function Chat() {
         <button onClick={logout} style={{ marginTop: 'auto', background: 'var(--error)', color: '#fff' }}>Logout</button>
       </aside>
       {/* Main Chat Area */}
-      <main style={{
+      <main className="chat-main" style={{
         flex: 1,
         background: 'linear-gradient(135deg, #f7f6f2 0%, #e9e4f0 100%)',
         borderTopRightRadius: 18,
