@@ -22,14 +22,14 @@ router.post('/sync', async (req, res) => {
   const { uid, email, displayName } = req.body;
   if (!uid || !email) return res.status(400).json({ message: 'Missing uid or email' });
   try {
-    let user = await User.findOne({ uid });
-    if (!user) {
-      user = new User({ uid, email, displayName });
-      await user.save();
-    }
+    const user = await User.findOneAndUpdate(
+      { uid },
+      { $set: { email, displayName }, $setOnInsert: { uid } },
+      { new: true, upsert: true }
+    );
     res.json({ message: 'User synced', user });
   } catch (err) {
-    // Optionally log error in production, but do not expose details
+    console.error('User sync error:', err && err.message ? err.message : err);
     res.status(500).json({ message: 'An unexpected error occurred. Please try again.' });
   }
 });
