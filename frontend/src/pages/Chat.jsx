@@ -16,7 +16,7 @@ function Chat() {
     if (!user) return;
     socketRef.current = io(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL, {
       auth: { uid: user.uid },
-      transports: ['websocket'],
+      withCredentials: true,
     });
     socketRef.current.emit('userOnline', user.uid);
     socketRef.current.on('onlineUsers', setOnlineUsers);
