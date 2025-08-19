@@ -53,8 +53,16 @@ app.use('/api/messages', messageRoutes);
 
 // MongoDB connection (modern driver options no longer needed)
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {/* MongoDB connected */})
-  .catch(err => {/* MongoDB connection error */});
+  .then(() => { console.log('MongoDB connected'); })
+  .catch(err => { console.error('MongoDB connection error:', err && err.message ? err.message : err); });
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    up: true,
+    dbState: mongoose.connection.readyState, // 0=disconnected,1=connected,2=connecting,3=disconnecting
+  });
+});
 
 // Socket.IO events
 io.on('connection', (socket) => {
