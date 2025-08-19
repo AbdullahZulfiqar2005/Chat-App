@@ -17,7 +17,7 @@ function Register() {
     setLoading(true);
     try {
       await register(email, password);
-      setSuccess('Registration successful! Please check your email to verify your account before logging in.');
+      setSuccess('Registration successful! Please check your email(***Especially Spam***) to verify your account before logging in.');
     } catch (err) {
       let msg = 'Registration failed';
       if (err.code === 'auth/email-already-in-use') msg = 'This email is already registered.';
