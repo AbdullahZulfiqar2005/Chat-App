@@ -22,7 +22,7 @@ function MessageInput({ onSend, disabled }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{
+    <form className="message-input" onSubmit={handleSubmit} style={{
       display: 'flex',
       gap: 12,
       marginTop: 12,

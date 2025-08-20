@@ -87,4 +87,12 @@ input, textarea {
   .chat-main button {
     width: 100%;
   }
+  form.message-input {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 8px;
+  }
+  form.message-input > button[type="submit"] {
+    width: 100%;
+  }
 }

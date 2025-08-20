@@ -129,6 +129,16 @@ function ChatWindow({ selectedUser, socket }) {
                     cursor: 'pointer',
                   }}
                 >
+                  {msg.sender !== user.uid && (
+                    <div style={{
+                      fontSize: '0.75em',
+                      color: 'var(--muted)',
+                      marginBottom: 4,
+                      fontWeight: 600,
+                    }}>
+                      {selectedUser?.displayName || selectedUser?.email?.split('@')[0] || 'Sender'}
+                    </div>
+                  )}
                   {msg.content}
                 </div>
               </div>
